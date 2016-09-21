@@ -109,10 +109,24 @@ class AutoComplete extends Component {
      */
     maxSearchResults: PropTypes.number,
     /**
+     * Override style for menu.
+     */
+    menuClassName: PropTypes.string,
+    /**
      * Delay for closing time of the menu.
      */
     menuCloseDelay: PropTypes.number,
     /**
+     * Props to be passed to menu.
+     */
+    menuItemClassName: PropTypes.string,
+    /**
+     /**
+     * Props to be passed to menu.
+     */
+    menuItemProps: PropTypes.object,
+    /**
+     /**
      * Props to be passed to menu.
      */
     menuProps: PropTypes.object,
@@ -377,9 +391,12 @@ class AutoComplete extends Component {
       style,
       hintText,
       maxSearchResults,
+      menuClassName,
       menuCloseDelay, // eslint-disable-line no-unused-vars
       textFieldStyle,
       menuStyle,
+      menuItemClassName,
+      menuItemProps,
       menuProps,
       listStyle,
       targetOrigin,
@@ -410,14 +427,16 @@ class AutoComplete extends Component {
             requestsList.push({
               text: item,
               value: (
-                <MenuItem
-                  innerDivStyle={styles.innerDiv}
-                  value={item}
-                  primaryText={item}
-                  disableFocusRipple={disableFocusRipple}
-                  key={index}
-                />),
-            });
+              <MenuItem
+            {...menuItemProps}
+            className={menuItemClassName}
+            innerDivStyle={styles.innerDiv}
+            value={item}
+            primaryText={item}
+            disableFocusRipple={disableFocusRipple}
+            key={index}
+              />),
+          });
           }
           break;
 
@@ -428,7 +447,7 @@ class AutoComplete extends Component {
 
             const itemValue = item[this.props.dataSourceConfig.value];
             if (itemValue.type && (itemValue.type.muiName === MenuItem.muiName ||
-               itemValue.type.muiName === Divider.muiName)) {
+              itemValue.type.muiName === Divider.muiName)) {
               requestsList.push({
                 text: itemText,
                 value: React.cloneElement(itemValue, {
@@ -440,19 +459,21 @@ class AutoComplete extends Component {
               requestsList.push({
                 text: itemText,
                 value: (
-                  <MenuItem
-                    innerDivStyle={styles.innerDiv}
-                    primaryText={itemText}
-                    disableFocusRipple={disableFocusRipple}
-                    key={index}
-                  />),
-              });
+                <MenuItem
+              {...menuItemProps}
+              className={menuItemClassName}
+              innerDivStyle={styles.innerDiv}
+              primaryText={itemText}
+              disableFocusRipple={disableFocusRipple}
+              key={index}
+                />),
+            });
             }
           }
           break;
 
         default:
-          // Do nothing
+        // Do nothing
       }
 
       return !(maxSearchResults && maxSearchResults > 0 && requestsList.length === maxSearchResults);
@@ -462,56 +483,57 @@ class AutoComplete extends Component {
 
     const menu = open && requestsList.length > 0 && (
       <Menu
-        {...menuProps}
-        ref="menu"
-        autoWidth={false}
-        disableAutoFocus={focusTextField}
-        onEscKeyDown={this.handleEscKeyDown}
-        initiallyKeyboardFocused={true}
-        onItemTouchTap={this.handleItemTouchTap}
-        onMouseDown={this.handleMouseDown}
-        style={Object.assign(styles.menu, menuStyle)}
-        listStyle={Object.assign(styles.list, listStyle)}
-      >
-        {requestsList.map((i) => i.value)}
-      </Menu>
-    );
+    {...menuProps}
+    ref="menu"
+    autoWidth={false}
+    className={menuClassName}
+    disableAutoFocus={focusTextField}
+    onEscKeyDown={this.handleEscKeyDown}
+    initiallyKeyboardFocused={true}
+    onItemTouchTap={this.handleItemTouchTap}
+    onMouseDown={this.handleMouseDown}
+    style={Object.assign(styles.menu, menuStyle)}
+    listStyle={Object.assign(styles.list, listStyle)}
+  >
+    {requestsList.map((i) => i.value)}
+  </Menu>
+  );
 
     return (
       <div style={prepareStyles(Object.assign(styles.root, style))} >
-        <TextField
-          {...other}
-          ref="searchTextField"
-          autoComplete="off"
-          value={searchText}
-          onChange={this.handleChange}
-          onBlur={this.handleBlur}
-          onFocus={this.handleFocus}
-          onKeyDown={this.handleKeyDown}
-          floatingLabelText={floatingLabelText}
-          hintText={hintText}
-          fullWidth={fullWidth}
-          multiLine={false}
-          errorStyle={errorStyle}
-          style={textFieldStyle}
-        />
-        <Popover
-          {...popoverProps}
-          style={styles.popover}
-          canAutoPosition={false}
-          anchorOrigin={anchorOrigin}
-          targetOrigin={targetOrigin}
-          open={open}
-          anchorEl={anchorEl}
-          useLayerForClickAway={false}
-          onRequestClose={this.handleRequestClose}
-          animated={animated}
-          animation={animation}
-        >
-          {menu}
-        </Popover>
+  <TextField
+    {...other}
+    ref="searchTextField"
+    autoComplete="off"
+    value={searchText}
+    onChange={this.handleChange}
+    onBlur={this.handleBlur}
+    onFocus={this.handleFocus}
+    onKeyDown={this.handleKeyDown}
+    floatingLabelText={floatingLabelText}
+    hintText={hintText}
+    fullWidth={fullWidth}
+    multiLine={false}
+    errorStyle={errorStyle}
+    style={textFieldStyle}
+      />
+      <Popover
+    {...popoverProps}
+    style={styles.popover}
+    canAutoPosition={false}
+    anchorOrigin={anchorOrigin}
+    targetOrigin={targetOrigin}
+    open={open}
+    anchorEl={anchorEl}
+    useLayerForClickAway={false}
+    onRequestClose={this.handleRequestClose}
+    animated={animated}
+    animation={animation}
+      >
+      {menu}
+      </Popover>
       </div>
-    );
+  );
   }
 }
 
